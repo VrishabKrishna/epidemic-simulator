@@ -136,6 +136,8 @@ BETA_PT = 0;
 
 ALPHA = 0.8; //exponent of number of people in a household while normalising infection rate in a household.
 
+COMPLIANCE_PROBABILITY = set_compliance();
+
 //To what extent does a family comply with an intervention? 1 = full compliance, 0 = no compliance.
 function set_compliance() {
     var val = 1;
@@ -1868,7 +1870,10 @@ function run_simulation() {
             "Calculating Simulation for Day: " + time_step / SIM_STEPS_PER_DAY;
         let days = time_step / SIM_STEPS_PER_DAY - cumul_days;
 
-        if (days > INTERVENTIONS[interv_ind].time) {
+        if (
+            interv_ind < INTERVENTIONS.length &&
+            days > INTERVENTIONS[interv_ind].time
+        ) {
             cumul_days += INTERVENTIONS[interv_ind].time;
             interv_ind++;
         }
@@ -2170,7 +2175,6 @@ function plot_plotly(data, plot_position, title_text, legends) {
 //Main function
 function runSimulations() {
     //clear_plots();
-
     //get the inputs from the HTML page
     NUM_DAYS = document.getElementById("numDays").value; // == 0 ? NUM_DAYS : document.getElementById("numDays").value;
     NUM_TIMESTEPS = NUM_DAYS * SIM_STEPS_PER_DAY;
@@ -2209,6 +2213,7 @@ function runSimulations() {
     //INTERVENTION = parseInt(document.getElementById("interventions").value);
 
     li_interventions = document.getElementsByClassName("interv-li");
+    INTERVENTIONS = [];
     for (let i = 0; i < li_interventions.length; i++) {
         INTERVENTIONS.push({
             value: parseInt(li_interventions[i].value),
@@ -2219,7 +2224,7 @@ function runSimulations() {
     INTERVENTION = INTERVENTIONS[0].value;
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
-    console.log("INTERVENTION = ", INTERVENTION);
+    console.log({ INTERVENTIONS });
 
     //where simulation starts
     run_simulation();
