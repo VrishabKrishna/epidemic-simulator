@@ -1868,17 +1868,20 @@ function run_simulation() {
         console.log("inside the interval stuff. time_step = ", time_step);
         document.getElementById("status").innerHTML =
             "Calculating Simulation for Day: " + time_step / SIM_STEPS_PER_DAY;
+        // Days after intervention commencement
         let days = time_step / SIM_STEPS_PER_DAY - cumul_days;
 
+        // Checking if allowed
         if (
-            interv_ind < INTERVENTIONS.length &&
-            days > INTERVENTIONS[interv_ind].time
+            interv_ind <= INTERVENTIONS.length &&
+            days > INTERVENTIONS[interv_ind].time &&
+            days > NUM_DAYS_BEFORE_INTERVENTIONS
         ) {
             cumul_days += INTERVENTIONS[interv_ind].time;
             interv_ind++;
+        } else {
+            INTERVENTION = NO_INTERVENTION;
         }
-
-        INTERVENTION = INTERVENTIONS[interv_ind].value;
 
         time_step = run_simday(
             time_step + 1,
