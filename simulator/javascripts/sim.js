@@ -2216,11 +2216,18 @@ function runSimulations() {
     //INTERVENTION = parseInt(document.getElementById("interventions").value);
 
     li_interventions = document.getElementsByClassName("interv-li");
+
     INTERVENTIONS = [];
+
     for (let i = 0; i < li_interventions.length; i++) {
+        div = li_interventions[i].children[0];
+        value = div.children[0].value;
+        console.log(2);
+        time = div.children[1].value;
+        console.log(3);
         INTERVENTIONS.push({
-            value: parseInt(li_interventions[i].value),
-            time: parseInt(li_interventions[i].time),
+            value: parseInt(value),
+            time: parseInt(time),
         });
     }
 

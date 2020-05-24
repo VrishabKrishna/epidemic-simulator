@@ -246,20 +246,9 @@
                         <!--<legend class="w-auto" style="font-size: large; font-weight:bold;">Intervention Method</legend>-->
 
                         <div id="interv">
-                            <select id="interv-choice">
-                                <option value="0">No Intervention</option>
-                                <option value="1">Case Isolation</option>
-                                <option value="2">Home Quarantine</option>
-                                <option value="3">Lockdown</option>
-                                <option value="4">Case isolation and home quarantine of infected household
-                                </option>
-                                <option value="5">Case isolation, home quarantine of infected households, and
-                                    social distancing of those above 65 years of age</option>
-                            </select>
-                            Duration: <input id="interv-time" type="text">
                         </div>
                     </div>
-                    <button class="add-interv" onclick=newInterv()>Add Interval</button>
+                    <button class="add-interv" onclick=newInterv()>Add Intervention</button>
                 </div>
                 <div class="form-group row">
                     <label for="compliance" class="col-sm-8 form-label">Compliance Probability</label>
@@ -324,64 +313,66 @@
 </div>
 
 <script>
-    // Render the list of interventions
-    let intervList = document.getElementsByClassName("interv-li");
-    var i;
-    for (i = 0; i < intervList.length; i++) {
-        var span = document.createElement("SPAN");
-        var txt = document.createTextNode("\u00D7");
-        var time = document.createTextNode(intervList[i].time);
-        span.className = "rm-interv";
-        span.appendChild(time);
-        span.appendChild(txt);
-        intervList[i].appendChild(span);
-    }
-
-    // Click on a close button to hide the current list item var
-    close = document.getElementsByClassName("rm-interv");
-    var i;
-    for (i = 0; i < close.length; i++) {
-        close[i].onclick = function () {
-            var div = this.parentElement;
-            div.style.display = "none";
-        };
-    }
     // Create a new list itemwhen clicking on the "Add"button
 
     const mapping = {
-        "0": "No Intervention",
-        "1": "Case Isolation",
-        "2": "Home Quarantine",
-        "3": "Lockdown",
-        "4": "Case isolation and home quarantine of infected household",
-        "5": "Case isolation, home quarantine of infected households, and social distancing of those above 65 years of age"
+        "0": "No Intervention (NI)",
+        "1": "Case Isolation (CI)",
+        "2": "Home Quarantine (HQ)",
+        "3": "Lockdown (LD)",
+        "4": "CI and HQ of infected household (CIHQI)",
+        "5": "CIHQI and social distancing of those above 65 years of age"
     }
 
+    let count = 0
+
     function newInterv() {
-        var li = document.createElement("li");
+        let li = document.createElement("li");
+        li.number = count
         li.className = "interv-li"
-        var inputValue = document.getElementById("interv-choice").value;
-        var intervTime = document.getElementById("interv-time").value;
-        var t = document.createTextNode(mapping[inputValue]);
-        li.appendChild(t);
-        li.value = inputValue
-        li.time = intervTime
-        console.log({
-            inputValue
-        })
-        document.getElementById("interv").appendChild(li);
-        var span = document.createElement("SPAN");
-        var txt = document.createTextNode("\u00D7");
-        var time = document.createTextNode(intervList[i].time);
-        span.className = "rm-interv";
-        span.appendChild(time);
-        span.appendChild(txt);
-        li.appendChild(span);
-        for (i = 0; i < close.length; i++) {
-            close[i].onclick = function () {
-                var div = this.parentElement;
-                div.style.display = "none";
-            };
+        /*
+        let intervCode = document.getElementById("interv-choice").value;
+        let intervTime = document.getElementById("interv-time").value;
+        let intervName = mapping[intervCode];
+        */
+
+        // Create li div for everything
+        let liDiv = document.createElement("div");
+        liDiv.className = "li-interv-div"
+        let selectInterv = document.createElement("select")
+        const createOption = (value, text) => {
+            let option = document.createElement("option");
+            option.appendChild(document.createTextNode(text))
+            option.value = String(value)
+            return option;
         }
+
+        for (let code in mapping) {
+            selectInterv.appendChild(createOption(code, mapping[code]))
+        }
+        selectInterv.className = "li-interv-select"
+
+        let input = document.createElement("input")
+        input.className = "li-interv-time"
+        input.type = "text"
+        input.placeholder = "Duration in days"
+
+        liDiv.appendChild(selectInterv)
+        liDiv.appendChild(input)
+
+        li.appendChild(liDiv);
+
+        let close = document.createElement("input");
+        close.type = "button"
+        close.value = "\u2715"
+        liDiv.appendChild(close);
+        close.onclick = () => {
+            li.parentNode.removeChild(li);
+        }
+
+
+        document.getElementById("interv").appendChild(li);
+
+        count++
     }
 </script>
