@@ -1869,20 +1869,20 @@ function run_simulation() {
         document.getElementById("status").innerHTML =
             "Calculating Simulation for Day: " + time_step / SIM_STEPS_PER_DAY;
         // Days after intervention commencement
-        let days = time_step / SIM_STEPS_PER_DAY - cumul_days;
+        let days = time_step / SIM_STEPS_PER_DAY;
 
         // Checking if allowed
         if (
-            interv_ind <= INTERVENTIONS.length &&
-            days > INTERVENTIONS[interv_ind].time &&
-            days > NUM_DAYS_BEFORE_INTERVENTIONS
+            interv_ind < INTERVENTIONS.length &&
+            days >= NUM_DAYS_BEFORE_INTERVENTIONS + cumul_days
         ) {
             cumul_days += INTERVENTIONS[interv_ind].time;
             interv_ind++;
+            INTERVENTION = INTERVENTIONS[interv_ind];
         } else {
             INTERVENTION = NO_INTERVENTION;
         }
-
+        console.log({ days, INTERVENTION });
         time_step = run_simday(
             time_step + 1,
             homes,
@@ -2213,8 +2213,6 @@ function runSimulations() {
     BETA_S = document.getElementById("betaSchools").value;
     BETA_PT = document.getElementById("betaPT").value;
 
-    //INTERVENTION = parseInt(document.getElementById("interventions").value);
-
     li_interventions = document.getElementsByClassName("interv-li");
 
     INTERVENTIONS = [];
@@ -2231,7 +2229,7 @@ function runSimulations() {
         });
     }
 
-    INTERVENTION = INTERVENTIONS[0].value;
+    INTERVENTION = NO_INTERVENTION;
 
     console.log(NUM_DAYS, INIT_FRAC_INFECTED, INTERVENTION);
     console.log({ INTERVENTIONS });
