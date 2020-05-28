@@ -38,7 +38,7 @@ NUM_DISEASE_STATES = 7; //0-S, 1-E, 2-I, 3-Symp,4-R, 5-H, 6-C, 7-D
 
 //Various interventions. These will need to be generalised soon.
 CALIBRATION_DELAY = 0; //// Assuming the simulator starts on March 1.
-NUM_DAYS_BEFORE_INTERVENTIONS = 24 + CALIBRATION_DELAY;
+NUM_DAYS_BEFORE_INTERVENTIONS = 0; // 24 + CALIBRATION_DELAY;
 const CALIBRATION = -1;
 const NO_INTERVENTION = 0;
 const CASE_ISOLATION = 1;
@@ -1401,6 +1401,7 @@ function update_all_kappa(nodes, homes, workplaces, communities, cur_time) {
             current_time
         );
     } else {
+        console.log({ INTERVENTION });
         switch (INTERVENTION) {
             case CALIBRATION:
                 get_kappa_CALIBRATION(
@@ -1877,10 +1878,8 @@ function run_simulation() {
             days >= NUM_DAYS_BEFORE_INTERVENTIONS + cumul_days
         ) {
             cumul_days += INTERVENTIONS[interv_ind].time;
+            INTERVENTION = INTERVENTIONS[interv_ind].value;
             interv_ind++;
-            INTERVENTION = INTERVENTIONS[interv_ind];
-        } else {
-            INTERVENTION = NO_INTERVENTION;
         }
         console.log({ days, INTERVENTION });
         time_step = run_simday(
